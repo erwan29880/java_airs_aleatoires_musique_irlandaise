@@ -1,0 +1,11 @@
+version: '3.6'
+services:
+  bddmysql:
+    container_name: "api_music"
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    environment:
+      - MYSQL_ROOT_PASSWORD=pa
+    ports:
+      - 3306:3306
