@@ -35,7 +35,7 @@ public class Config implements Serializable {
     private String folderM3uPath;
     private String dbPath;
     private String playlistFilePath;
-    private final String dbName = "music.db";
+    private final String dbName = "db.db";
 
     public Config() {}
 
@@ -123,7 +123,17 @@ public class Config implements Serializable {
         if (endIndex == -1) {
             throw new ConfigError("Le chemin d'accès ne correspond au dossier demandé");
         }
-        this.irishMusicDirectory = irishPath.substring(0, endIndex);
+
+        // vérifications à tout hasard que l'os ne rejaoute pas / ou \
+        if (irishPath.endsWith("H")) {
+            this.irishMusicDirectory = irishPath;
+        } else if(irishPath.endsWith("\\")) {
+            this.irishMusicDirectory = irishPath.substring(0, irishPath.length() -1);
+        } else if(irishPath.endsWith("/")) {
+            this.irishMusicDirectory = irishPath.substring(0, irishPath.length() -1);
+        } else {
+            this.irishMusicDirectory = irishPath;
+        }
     }
 
 
@@ -153,8 +163,5 @@ public class Config implements Serializable {
     public void setIrishMusicDirectory(String directory) {
         this.irishMusicDirectory = directory;
     }
-
-    
-
     
 }

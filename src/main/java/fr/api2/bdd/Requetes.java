@@ -5,7 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
+import fr.api2.config.Config;
 import fr.api2.bdd.Connect;
 
 
@@ -47,7 +47,7 @@ public class Requetes {
      * @return les chemins d'accès de 50 pistes audio en pseudo aléatoire
      */
     public String[] getAll() {
-        String sql = "SELECT path FROM music where vgg>0.5 and cnn<0.5 order by random() limit 50";
+        String sql = "SELECT path FROM music where vgg=0 and cnn=0 order by random() limit 50";
         String[] res = new String[50];
 
         try (Connection conn = new Connect(this.dbPath).connexion();
@@ -61,12 +61,23 @@ public class Requetes {
                     inc++;
                 }
 
+                // les paths dans la bdd sont enregistrés avec les \ de windows
+                // remplacement par des / pour linux
+                if(System.getProperty("os.name").toLowerCase().indexOf("linux") != -1) {
+                    String[] res2 = new String[50];
+                    for (int i = 0; i < 50 ; i++) {
+                        String prov = res[i].replace("\\", "/");
+                        res2[i] = prov;
+                    }
+                    return res2;
+                }
+                
                 return res;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("requetes sqlexecption : " + e.getMessage());
             return null;
         } catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
+            System.out.println("requetes file not found : " + e.getMessage());
             return null;
         }
     }
